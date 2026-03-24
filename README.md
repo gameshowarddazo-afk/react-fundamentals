@@ -1,157 +1,185 @@
-# Ternary Operator (Instead of if/else)
+# Arrow Functions (JavaScript for React)
 
 ---
 
 ## 1. Overview
 
-The **ternary operator** is a **shorter way to write simple if/else statements**.
+Arrow functions provide a **shorter syntax** for writing functions and handle the `this` keyword differently from regular functions.
 
 Syntax:
 
-```js
-condition ? valueIfTrue : valueIfFalse
+```js id="af1"
+const functionName = (parameters) => {
+  // function body
+};
 ```
 
-* `condition` → expression that evaluates to `true` or `false`
-* `valueIfTrue` → returned if condition is true
-* `valueIfFalse` → returned if condition is false
+* Use `()` for parameters
+* Use `{}` for multiple statements
+* If single expression, `{}` and `return` can be omitted
 
 ---
 
-## 2. Basic Example
+## 2. Basic Examples
 
-```js id="t1a2b3"
-const age = 18;
-const canVote = age >= 18 ? "Yes" : "No";
+### 2.1 Single-line arrow function
 
-console.log(canVote); // Yes
+```js id="af2"
+const add = (a, b) => a + b;
+
+console.log(add(2, 3)); // 5
 ```
 
-* `age >= 18` → condition
-* `"Yes"` → if true
-* `"No"` → if false
+* Single expression → returns automatically
 
 ---
 
-## 3. Replacing Simple if/else
+### 2.2 Multiple-line arrow function
 
-Instead of:
+```js id="af3"
+const multiply = (a, b) => {
+  const result = a * b;
+  return result;
+};
 
-```js id="t4c5d6"
-let status;
-if (age >= 18) {
-  status = "Adult";
-} else {
-  status = "Minor";
+console.log(multiply(2, 3)); // 6
+```
+
+* Use `{}` and `return` for multiple statements
+
+---
+
+### 2.3 No parameters
+
+```js id="af4"
+const greet = () => "Hello World";
+
+console.log(greet()); // Hello World
+```
+
+---
+
+### 2.4 Single parameter (no parentheses needed)
+
+```js id="af5"
+const square = x => x * x;
+
+console.log(square(4)); // 16
+```
+
+---
+
+## 3. Arrow Functions in React
+
+### 3.1 Functional Components
+
+```jsx id="af6"
+const App = () => <h1>Hello React</h1>;
+```
+
+* Always use `const` + arrow function for components
+
+---
+
+### 3.2 Event Handlers
+
+```jsx id="af7"
+const Button = () => {
+  const handleClick = () => console.log("Clicked!");
+  
+  return <button onClick={handleClick}>Click me</button>;
+};
+```
+
+* Arrow functions keep **`this` context** predictable
+
+---
+
+### 3.3 Map Function
+
+```jsx id="af8"
+const numbers = [1, 2, 3];
+const doubled = numbers.map(n => n * 2);
+
+console.log(doubled); // [2, 4, 6]
+```
+
+* Short and readable for array operations
+
+---
+
+## 4. Arrow Function with Destructuring
+
+```js id="af9"
+const printUser = ({ name, age }) => `${name} is ${age} years old`;
+
+const user = { name: "Howard", age: 21 };
+
+console.log(printUser(user)); // Howard is 21 years old
+```
+
+* Works well with objects and arrays
+
+---
+
+## 5. Common Mistakes
+
+* Using `this` differently than expected in regular functions
+
+```js id="af10"
+// ❌ Might not behave as expected
+function Person() {
+  this.age = 21;
+  setTimeout(function() { console.log(this.age); }, 1000);
+}
+
+// ✅ Arrow function fixes `this`
+function Person() {
+  this.age = 21;
+  setTimeout(() => { console.log(this.age); }, 1000);
 }
 ```
 
-You can write:
+* Forgetting parentheses for multiple parameters
 
-```js id="t7e8f9"
-const status = age >= 18 ? "Adult" : "Minor";
-```
-
-* Cleaner and shorter
-* Works for simple conditions
-
----
-
-## 4. Nested Ternaries (Advanced)
-
-```js id="t1g2h3"
-const score = 85;
-const grade = score >= 90 ? "A" :
-              score >= 80 ? "B" :
-              score >= 70 ? "C" : "F";
-
-console.log(grade); // B
-```
-
-* Can replace multiple if/else statements
-* Be careful: **don’t over-nest**, it reduces readability
-
----
-
-## 5. React Examples
-
-### 5.1 Conditional Rendering
-
-```jsx id="t4i5j6"
-const isLoggedIn = true;
-
-const App = () => (
-  <div>
-    {isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in</h1>}
-  </div>
-);
-```
-
-* Ternary operators are **commonly used in JSX**
-* Keeps rendering logic compact
-
----
-
-### 5.2 Inline Class Names
-
-```jsx id="t7k8l9"
-const isActive = false;
-
-const buttonClass = `btn ${isActive ? "btn-active" : "btn-inactive"}`;
-
-console.log(buttonClass); // "btn btn-inactive"
-```
-
----
-
-## 6. Common Mistakes
-
-* Using ternary for **complex logic** → makes code hard to read
-
-```js id="t1m2n3"
-// ❌ Hard to read
-const value = condition1 ? (condition2 ? "A" : "B") : (condition3 ? "C" : "D");
-```
-
-* Forgetting `:` → SyntaxError
-
-```js id="t4o5p6"
+```js id="af11"
 // ❌ Wrong
-const value = condition ? "Yes"; 
+const add = a, b => a + b;
+
+// ✅ Correct
+const add = (a, b) => a + b;
 ```
 
 ---
 
-## 7. Practice
+## 6. Practice
 
-Convert if/else to ternary:
+Convert to arrow function:
 
-```js id="t7q8r9"
-let message;
-if (score >= 50) {
-  message = "Pass";
-} else {
-  message = "Fail";
+```js id="af12"
+function greet(name) {
+  return `Hello ${name}`;
 }
 ```
 
 Answer:
 
-```js id="t0s1t2"
-const message = score >= 50 ? "Pass" : "Fail";
+```js id="af13"
+const greet = name => `Hello ${name}`;
 ```
 
 ---
 
-## 8. Summary
+## 7. Summary
 
-* Ternary operator is a **shortcut for if/else**
-* Syntax: `condition ? valueIfTrue : valueIfFalse`
-* Great for **simple conditions and JSX rendering**
-* Avoid nested ternaries for readability
+* Shorter syntax for functions
+* Auto-return for single expressions
+* Handles `this` differently → good for React events
+* Common in components, handlers, and array methods
 
 ---
 
 ## Rule
 
-Use **ternary operators** for concise conditions instead of simple if/else, especially in React JSX.
+Use **arrow functions** for **shorter, cleaner functions** and when you want **predictable `this` behavior**, especially in React.
+
