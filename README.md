@@ -1,141 +1,175 @@
-# Working with Immutable Arrays
+# Asynchronous JavaScript: Promises
 
 ---
 
 ## 1. Overview
 
-In React, **immutability is important**.
+A **Promise** is an object representing the **eventual completion or failure** of an asynchronous operation.
 
-* Avoid modifying the original array directly
-* Use **methods that return a new array** instead of mutating the old one
+* Helps avoid **callback hell**
+* Can be in **three states**:
 
-Common **mutable methods**: `push`, `pop`, `splice`, `sort`
-Common **immutable methods**: `map`, `filter`, `reduce`, `concat`, `slice`, `spread (...)`
+  1. **Pending** – initial state
+  2. **Fulfilled** – operation succeeded
+  3. **Rejected** – operation failed
+
+Syntax:
+
+```js id="p1"
+const promise = new Promise((resolve, reject) => {
+  // asynchronous code
+});
+```
+
+* `resolve(value)` → marks promise as fulfilled
+* `reject(error)` → marks promise as rejected
 
 ---
 
-## 2. Why Immutability Matters
+## 2. Basic Example
 
-```js id="ia1"
-const numbers = [1, 2, 3];
-const doubled = numbers.map(n => n * 2);
+```js id="p2"
+const fetchData = new Promise((resolve, reject) => {
+  const success = true;
 
-console.log(numbers); // [1, 2, 3] ✅ original not changed
-console.log(doubled); // [2, 4, 6]
+  setTimeout(() => {
+    if (success) resolve("Data received!");
+    else reject("Error occurred!");
+  }, 1000);
+});
+
+fetchData
+  .then(data => console.log(data))   // "Data received!"
+  .catch(error => console.error(error));
 ```
 
-* React relies on **state changes**
-* If you mutate the array, React may **not detect changes**
+* `then()` → handles **fulfilled**
+* `catch()` → handles **rejected**
 
 ---
 
-## 3. Adding Items (Immutable)
+## 3. Promises in React (Async Functions)
 
-```js id="ia2"
-const fruits = ["apple", "banana"];
+```js id="p3"
+const fetchUser = () => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve({ name: "Howard", age: 21 }), 1000);
+  });
+};
 
-// Using spread
-const newFruits = [...fruits, "mango"];
-console.log(newFruits); // ["apple", "banana", "mango"]
+fetchUser().then(user => console.log(user.name)); // Howard
 ```
 
-* Original `fruits` array **not changed**
+* Promises often used with **API calls**
 
 ---
 
-## 4. Removing Items (Immutable)
+## 4. Chaining Promises
 
-```js id="ia3"
-const numbers = [1, 2, 3, 4];
+```js id="p4"
+const fetchNumber = () => Promise.resolve(5);
 
-// Remove number 2
-const newNumbers = numbers.filter(n => n !== 2);
-console.log(newNumbers); // [1, 3, 4]
+fetchNumber()
+  .then(num => num * 2)
+  .then(result => console.log(result)); // 10
 ```
 
-* Use `filter()` to remove items **without mutating**
+* Each `then()` receives the value returned from previous step
 
 ---
 
-## 5. Updating Items (Immutable)
+## 5. Promise.all
 
-```js id="ia4"
-const users = [
-  { id: 1, name: "Howard" },
-  { id: 2, name: "Alice" }
-];
+```js id="p5"
+const promise1 = Promise.resolve(1);
+const promise2 = Promise.resolve(2);
+const promise3 = Promise.resolve(3);
 
-// Change name of user with id 2
-const updatedUsers = users.map(user =>
-  user.id === 2 ? { ...user, name: "Alicia" } : user
-);
-
-console.log(updatedUsers);
-// [{ id: 1, name: "Howard" }, { id: 2, name: "Alicia" }]
+Promise.all([promise1, promise2, promise3])
+  .then(values => console.log(values)); // [1, 2, 3]
 ```
 
-* Use `map()` + **spread** to update objects immutably
+* Waits for **all promises to resolve**
+* Rejects if **any promise fails**
 
 ---
 
-## 6. React State Example
+## 6. Async/Await (Syntactic Sugar)
 
-```jsx id="ia5"
-const [tasks, setTasks] = useState(["Task 1", "Task 2"]);
+```js id="p6"
+const fetchData = () => Promise.resolve("Data loaded!");
 
-const addTask = task => setTasks([...tasks, task]);
-const removeTask = task => setTasks(tasks.filter(t => t !== task));
+const getData = async () => {
+  try {
+    const data = await fetchData();
+    console.log(data); // "Data loaded!"
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+getData();
 ```
 
-* Always create **new array** when updating state
-* Avoid `tasks.push()` or `tasks.splice()`
+* `async` functions always return a **promise**
+* `await` pauses execution until promise resolves
 
 ---
 
 ## 7. Common Mistakes
 
-* Using `push`, `splice`, or `sort` directly on **state arrays**
+* Forgetting `catch()` → unhandled promise rejection
 
-```js id="ia6"
-// ❌ Mutates state directly
-tasks.push("Task 3");
-setTasks(tasks);
+```js id="p7"
+// ❌
+fetchData().then(data => console.log(data)); // if rejected → error
 ```
 
-* Correct approach: **use spread or array methods that return new arrays**
+* Using `await` outside of `async` function
 
-```js id="ia7"
-setTasks([...tasks, "Task 3"]); // ✅ Immutable
+```js id="p8"
+// ❌
+const data = await fetchData(); // SyntaxError
+
+// ✅
+const fetch = async () => {
+  const data = await fetchData();
+};
 ```
+
+* Not returning value in chained `then()`
 
 ---
 
 ## 8. Practice
 
-```js id="ia8"
-const numbers = [1, 2, 3];
+```js id="p9"
+const fetchNumber = () => Promise.resolve(10);
 
-// Add 4 immutably
+// Double the number and log it
 ```
 
 Answer:
 
-```js id="ia9"
-const newNumbers = [...numbers, 4];
-console.log(newNumbers); // [1, 2, 3, 4]
+```js id="p10"
+fetchNumber()
+  .then(num => num * 2)
+  .then(result => console.log(result)); // 20
 ```
 
 ---
 
 ## 9. Summary
 
-* Immutability avoids **unexpected bugs in React**
-* Use **map, filter, reduce, slice, spread**
-* Avoid **push, pop, splice, sort** directly
-* Always **return a new array** when updating state
+* Promises handle **asynchronous operations**
+* States: **pending, fulfilled, rejected**
+* `.then()` → handle success
+* `.catch()` → handle failure
+* `async/await` → cleaner syntax
+* `Promise.all()` → wait for multiple promises
 
 ---
 
 ## Rule
 
-Work with arrays **immutably** in React to ensure **state updates** are detected and UI re-renders correctly.
+Use **promises** to manage **async tasks** in JavaScript, especially for **API calls** or **delayed operations** in React.
