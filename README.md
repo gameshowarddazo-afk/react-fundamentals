@@ -1,159 +1,157 @@
-# Template Literals (JavaScript for React)
+# Ternary Operator (Instead of if/else)
 
 ---
 
 ## 1. Overview
 
-Template literals allow you to create **strings easily** and **embed variables** without using `+` for concatenation.
+The **ternary operator** is a **shorter way to write simple if/else statements**.
 
-* Use **backticks** `` ` `` instead of quotes `' '` or `" "`
-* Use **`${}`** to insert expressions
+Syntax:
+
+```js
+condition ? valueIfTrue : valueIfFalse
+```
+
+* `condition` → expression that evaluates to `true` or `false`
+* `valueIfTrue` → returned if condition is true
+* `valueIfFalse` → returned if condition is false
 
 ---
 
 ## 2. Basic Example
 
 ```js id="t1a2b3"
-const name = "Howard";
-const greeting = `Hello, ${name}!`;
+const age = 18;
+const canVote = age >= 18 ? "Yes" : "No";
 
-console.log(greeting); // Hello, Howard!
+console.log(canVote); // Yes
 ```
+
+* `age >= 18` → condition
+* `"Yes"` → if true
+* `"No"` → if false
 
 ---
 
-## 3. Multi-line Strings
+## 3. Replacing Simple if/else
+
+Instead of:
 
 ```js id="t4c5d6"
-const message = `This is line 1
-This is line 2
-This is line 3`;
-
-console.log(message);
-/*
-This is line 1
-This is line 2
-This is line 3
-*/
+let status;
+if (age >= 18) {
+  status = "Adult";
+} else {
+  status = "Minor";
+}
 ```
 
-* No need for `\n` for line breaks
-
----
-
-## 4. Expressions Inside Template Literals
+You can write:
 
 ```js id="t7e8f9"
-const a = 10;
-const b = 20;
-
-const result = `The sum of ${a} + ${b} is ${a + b}`;
-
-console.log(result); // The sum of 10 + 20 is 30
+const status = age >= 18 ? "Adult" : "Minor";
 ```
+
+* Cleaner and shorter
+* Works for simple conditions
 
 ---
 
-## 5. Template Literals with Functions
+## 4. Nested Ternaries (Advanced)
 
 ```js id="t1g2h3"
-const user = { name: "Howard", age: 21 };
+const score = 85;
+const grade = score >= 90 ? "A" :
+              score >= 80 ? "B" :
+              score >= 70 ? "C" : "F";
 
-const message = `Hello ${user.name}, you are ${user.age} years old.`;
-
-console.log(message);
+console.log(grade); // B
 ```
+
+* Can replace multiple if/else statements
+* Be careful: **don’t over-nest**, it reduces readability
 
 ---
 
-## 6. Using Template Literals in React
+## 5. React Examples
+
+### 5.1 Conditional Rendering
 
 ```jsx id="t4i5j6"
-const name = "Howard";
-const greeting = `Hello ${name}, welcome to React!`;
+const isLoggedIn = true;
 
-const App = () => <h1>{greeting}</h1>;
+const App = () => (
+  <div>
+    {isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in</h1>}
+  </div>
+);
 ```
 
-* Makes **JSX expressions cleaner**
-* Easier than concatenation with `+`
+* Ternary operators are **commonly used in JSX**
+* Keeps rendering logic compact
 
 ---
 
-## 7. Tagged Template Literals (Advanced)
+### 5.2 Inline Class Names
 
-```js id="t7k8l9"
-function highlight(strings, ...values) {
-  return strings.reduce(
-    (result, str, i) => `${result}<strong>${values[i - 1] || ''}</strong>${str}`
-  );
-}
+```jsx id="t7k8l9"
+const isActive = false;
 
-const name = "Howard";
-const age = 21;
+const buttonClass = `btn ${isActive ? "btn-active" : "btn-inactive"}`;
 
-const message = highlight`My name is ${name} and I am ${age} years old.`;
-
-console.log(message);
-// My name is <strong>Howard</strong> and I am <strong>21</strong> years old.
+console.log(buttonClass); // "btn btn-inactive"
 ```
-
-* Advanced feature: process template literal values with a function
 
 ---
 
-## 8. Common Mistakes
+## 6. Common Mistakes
 
-* Using quotes instead of backticks
+* Using ternary for **complex logic** → makes code hard to read
 
 ```js id="t1m2n3"
-// ❌ Wrong
-const msg = 'Hello ${name}';
-console.log(msg); // prints literally: Hello ${name}
-
-// ✅ Correct
-const msg = `Hello ${name}`;
+// ❌ Hard to read
+const value = condition1 ? (condition2 ? "A" : "B") : (condition3 ? "C" : "D");
 ```
 
-* Forgetting `${}` for expressions
+* Forgetting `:` → SyntaxError
 
 ```js id="t4o5p6"
-const a = 10;
-const msg = `Value is a`; // prints: Value is a
-
-const msgCorrect = `Value is ${a}`; // prints: Value is 10
+// ❌ Wrong
+const value = condition ? "Yes"; 
 ```
 
 ---
 
-## 9. Practice
+## 7. Practice
+
+Convert if/else to ternary:
 
 ```js id="t7q8r9"
-const firstName = "Howard";
-const lastName = "Dazo";
-
-// Create a greeting using template literals
+let message;
+if (score >= 50) {
+  message = "Pass";
+} else {
+  message = "Fail";
+}
 ```
 
 Answer:
 
 ```js id="t0s1t2"
-const greeting = `Hello ${firstName} ${lastName}!`;
-console.log(greeting); // Hello Howard Dazo!
+const message = score >= 50 ? "Pass" : "Fail";
 ```
 
 ---
 
-## 10. Summary
+## 8. Summary
 
-* Template literals use **backticks `` ` ``**
-* Use **`${}`** to embed variables or expressions
-* Support **multi-line strings**
-* Useful in React for JSX and dynamic content
-* Advanced: tagged template literals for custom string processing
+* Ternary operator is a **shortcut for if/else**
+* Syntax: `condition ? valueIfTrue : valueIfFalse`
+* Great for **simple conditions and JSX rendering**
+* Avoid nested ternaries for readability
 
 ---
 
 ## Rule
 
-Use **template literals** instead of string concatenation to make code **cleaner, readable, and dynamic**.
+Use **ternary operators** for concise conditions instead of simple if/else, especially in React JSX.
