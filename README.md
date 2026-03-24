@@ -1,185 +1,160 @@
-# Arrow Functions (JavaScript for React)
+# Short-Circuiting and Logical Operators (`&&`, `||`, `??`)
 
 ---
 
 ## 1. Overview
 
-Arrow functions provide a **shorter syntax** for writing functions and handle the `this` keyword differently from regular functions.
+Logical operators can be used not only for **true/false checks** but also for **short-circuit evaluation**.
 
-Syntax:
-
-```js id="af1"
-const functionName = (parameters) => {
-  // function body
-};
-```
-
-* Use `()` for parameters
-* Use `{}` for multiple statements
-* If single expression, `{}` and `return` can be omitted
+* **`&&`** → returns right-hand side if left-hand side is truthy
+* **`||`** → returns left-hand side if truthy, otherwise right-hand side
+* **`??`** → nullish coalescing, returns right-hand side if left-hand side is `null` or `undefined`
 
 ---
 
-## 2. Basic Examples
+## 2. AND (`&&`) Operator
 
-### 2.1 Single-line arrow function
+```js
+const isLoggedIn = true;
+const message = isLoggedIn && "Welcome back!";
 
-```js id="af2"
-const add = (a, b) => a + b;
-
-console.log(add(2, 3)); // 5
+console.log(message); // "Welcome back!"
 ```
 
-* Single expression → returns automatically
+* If `isLoggedIn` is `true` → returns right-hand value
+* If `isLoggedIn` is `false` → returns `false`
+
+### React Example
+
+```jsx
+const isLoggedIn = true;
+
+const App = () => (
+  <div>
+    {isLoggedIn && <h1>Welcome back!</h1>}
+  </div>
+);
+```
+
+* Common pattern for **conditional rendering**
 
 ---
 
-### 2.2 Multiple-line arrow function
+## 3. OR (`||`) Operator
 
-```js id="af3"
-const multiply = (a, b) => {
-  const result = a * b;
-  return result;
-};
+```js
+const username = "";
+const defaultName = username || "Guest";
 
-console.log(multiply(2, 3)); // 6
+console.log(defaultName); // "Guest"
 ```
 
-* Use `{}` and `return` for multiple statements
+* Returns **first truthy value**
+* Useful for **default values**
 
----
+### React Example
 
-### 2.3 No parameters
+```jsx
+const user = { name: "" };
 
-```js id="af4"
-const greet = () => "Hello World";
-
-console.log(greet()); // Hello World
-```
-
----
-
-### 2.4 Single parameter (no parentheses needed)
-
-```js id="af5"
-const square = x => x * x;
-
-console.log(square(4)); // 16
+const App = () => (
+  <h1>Hello {user.name || "Guest"}</h1>
+);
 ```
 
 ---
 
-## 3. Arrow Functions in React
+## 4. Nullish Coalescing (`??`) Operator
 
-### 3.1 Functional Components
+```js
+const count = 0;
+const displayCount = count ?? 10;
 
-```jsx id="af6"
-const App = () => <h1>Hello React</h1>;
+console.log(displayCount); // 0
 ```
 
-* Always use `const` + arrow function for components
+* Only returns right-hand side if **left-hand side is ****`null`**** or ****`undefined`**
+* Different from `||` because `0`, `""`, `false` are considered valid
 
----
+### React Example
 
-### 3.2 Event Handlers
+```jsx
+const user = { name: null };
 
-```jsx id="af7"
-const Button = () => {
-  const handleClick = () => console.log("Clicked!");
-  
-  return <button onClick={handleClick}>Click me</button>;
-};
-```
-
-* Arrow functions keep **`this` context** predictable
-
----
-
-### 3.3 Map Function
-
-```jsx id="af8"
-const numbers = [1, 2, 3];
-const doubled = numbers.map(n => n * 2);
-
-console.log(doubled); // [2, 4, 6]
-```
-
-* Short and readable for array operations
-
----
-
-## 4. Arrow Function with Destructuring
-
-```js id="af9"
-const printUser = ({ name, age }) => `${name} is ${age} years old`;
-
-const user = { name: "Howard", age: 21 };
-
-console.log(printUser(user)); // Howard is 21 years old
-```
-
-* Works well with objects and arrays
-
----
-
-## 5. Common Mistakes
-
-* Using `this` differently than expected in regular functions
-
-```js id="af10"
-// ❌ Might not behave as expected
-function Person() {
-  this.age = 21;
-  setTimeout(function() { console.log(this.age); }, 1000);
-}
-
-// ✅ Arrow function fixes `this`
-function Person() {
-  this.age = 21;
-  setTimeout(() => { console.log(this.age); }, 1000);
-}
-```
-
-* Forgetting parentheses for multiple parameters
-
-```js id="af11"
-// ❌ Wrong
-const add = a, b => a + b;
-
-// ✅ Correct
-const add = (a, b) => a + b;
+const App = () => <h1>Hello {user.name ?? "Guest"}</h1>;
 ```
 
 ---
 
-## 6. Practice
+## 5. Combining Operators
 
-Convert to arrow function:
+```js
+const isLoggedIn = true;
+const username = "";
 
-```js id="af12"
-function greet(name) {
-  return `Hello ${name}`;
-}
+const displayName = isLoggedIn && (username || "Guest");
+
+console.log(displayName); // "Guest"
+```
+
+* Use `&&` to check conditions
+* Use `||` or `??` for default values
+
+---
+
+## 6. Common Mistakes
+
+* Using `||` when `0` or `""` is valid
+
+```js
+//  Wrong
+const value = 0;
+const display = value || 10; // 10 instead of 0
+
+//  c
+const display = value ?? 10; // 0
+```
+
+* Forgetting parentheses in complex expressions
+
+```js
+// Wrong
+const result = isLoggedIn && username || "Guest"; // can be confusing
+
+// Correct
+const result = isLoggedIn && (username || "Guest");
+```
+
+---
+
+## 7. Practice
+
+```js
+const user = { name: "" };
+const isLoggedIn = false;
+
+// Create a displayName that shows "Guest" if not logged in or name is empty
 ```
 
 Answer:
 
-```js id="af13"
-const greet = name => `Hello ${name}`;
+```js
+const displayName = isLoggedIn && (user.name || "Guest");
+console.log(displayName); // false
 ```
 
 ---
 
-## 7. Summary
+## 8. Summary
 
-* Shorter syntax for functions
-* Auto-return for single expressions
-* Handles `this` differently → good for React events
-* Common in components, handlers, and array methods
+* `&&` → run right-hand side if left is truthy
+* `||` → return first truthy value
+* `??` → return right-hand side only if left is `null` or `undefined`
+* Common in React for **conditional rendering** and **default values**
+* Use parentheses to avoid confusion in combined expressions
 
 ---
 
 ## Rule
 
-Use **arrow functions** for **shorter, cleaner functions** and when you want **predictable `this` behavior**, especially in React.
-
+Use logical operators for **short, readable conditions** and to **provide defaults** without `if/else` statements.
