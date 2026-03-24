@@ -1,154 +1,141 @@
-# The Array `sort()` Method
+# Working with Immutable Arrays
 
 ---
 
 ## 1. Overview
 
-The `sort()` method **sorts the elements of an array in place** and **returns the sorted array**.
+In React, **immutability is important**.
 
-* Default sort is **lexicographical** (like strings)
-* Can provide a **compare function** for numeric or custom sorting
-* **Original array is modified**
+* Avoid modifying the original array directly
+* Use **methods that return a new array** instead of mutating the old one
 
-Syntax:
-
-```js id="sort1"
-array.sort((a, b) => {
-  // return < 0 → a before b
-  // return 0 → keep order
-  // return > 0 → b before a
-});
-```
+Common **mutable methods**: `push`, `pop`, `splice`, `sort`
+Common **immutable methods**: `map`, `filter`, `reduce`, `concat`, `slice`, `spread (...)`
 
 ---
 
-## 2. Sorting Strings
+## 2. Why Immutability Matters
 
-```js id="sort2"
-const fruits = ["banana", "apple", "mango"];
-fruits.sort();
+```js id="ia1"
+const numbers = [1, 2, 3];
+const doubled = numbers.map(n => n * 2);
 
-console.log(fruits); // ["apple", "banana", "mango"]
+console.log(numbers); // [1, 2, 3] ✅ original not changed
+console.log(doubled); // [2, 4, 6]
 ```
 
-* Default sort works well for **strings**
+* React relies on **state changes**
+* If you mutate the array, React may **not detect changes**
 
 ---
 
-## 3. Sorting Numbers
+## 3. Adding Items (Immutable)
 
-```js id="sort3"
-const numbers = [10, 5, 20, 1];
-numbers.sort();
+```js id="ia2"
+const fruits = ["apple", "banana"];
 
-console.log(numbers); // [1, 10, 20, 5] ❌ unexpected
+// Using spread
+const newFruits = [...fruits, "mango"];
+console.log(newFruits); // ["apple", "banana", "mango"]
 ```
 
-* Default sort treats numbers as strings → **not numeric**
-
-### Correct Numeric Sort
-
-```js id="sort4"
-const numbers = [10, 5, 20, 1];
-numbers.sort((a, b) => a - b);
-
-console.log(numbers); // [1, 5, 10, 20]
-```
-
-* `a - b` → ascending
-* `b - a` → descending
+* Original `fruits` array **not changed**
 
 ---
 
-## 4. Sorting Objects
+## 4. Removing Items (Immutable)
 
-```js id="sort5"
+```js id="ia3"
+const numbers = [1, 2, 3, 4];
+
+// Remove number 2
+const newNumbers = numbers.filter(n => n !== 2);
+console.log(newNumbers); // [1, 3, 4]
+```
+
+* Use `filter()` to remove items **without mutating**
+
+---
+
+## 5. Updating Items (Immutable)
+
+```js id="ia4"
 const users = [
-  { name: "Howard", age: 21 },
-  { name: "Alice", age: 25 },
-  { name: "Bob", age: 18 }
+  { id: 1, name: "Howard" },
+  { id: 2, name: "Alice" }
 ];
 
-users.sort((a, b) => a.age - b.age);
-
-console.log(users);
-// [{ name: "Bob", age: 18 }, { name: "Howard", age: 21 }, { name: "Alice", age: 25 }]
-```
-
-* Sort by **object property** using a compare function
-
----
-
-## 5. React Example: Rendering Sorted List
-
-```jsx id="sort6"
-const users = [
-  { id: 1, name: "Howard", age: 21 },
-  { id: 2, name: "Alice", age: 25 }
-];
-
-const UserList = () => (
-  <ul>
-    {users
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(user => <li key={user.id}>{user.name}</li>)}
-  </ul>
+// Change name of user with id 2
+const updatedUsers = users.map(user =>
+  user.id === 2 ? { ...user, name: "Alicia" } : user
 );
+
+console.log(updatedUsers);
+// [{ id: 1, name: "Howard" }, { id: 2, name: "Alicia" }]
 ```
 
-* Use `localeCompare` for **alphabetical sorting in strings**
-* Combine with `map()` for React list rendering
+* Use `map()` + **spread** to update objects immutably
 
 ---
 
-## 6. Common Mistakes
+## 6. React State Example
 
-* Not providing a compare function for numbers → gives **incorrect order**
-* Forgetting that `sort()` **modifies the original array**
+```jsx id="ia5"
+const [tasks, setTasks] = useState(["Task 1", "Task 2"]);
 
-```js id="sort7"
-// ❌
-const numbers = [3, 1, 2];
-const sorted = numbers.sort(); // numbers is modified
+const addTask = task => setTasks([...tasks, task]);
+const removeTask = task => setTasks(tasks.filter(t => t !== task));
 ```
 
-* To avoid modifying the original array, copy first:
+* Always create **new array** when updating state
+* Avoid `tasks.push()` or `tasks.splice()`
 
-```js id="sort8"
-const numbers = [3, 1, 2];
-const sorted = [...numbers].sort((a, b) => a - b);
+---
+
+## 7. Common Mistakes
+
+* Using `push`, `splice`, or `sort` directly on **state arrays**
+
+```js id="ia6"
+// ❌ Mutates state directly
+tasks.push("Task 3");
+setTasks(tasks);
+```
+
+* Correct approach: **use spread or array methods that return new arrays**
+
+```js id="ia7"
+setTasks([...tasks, "Task 3"]); // ✅ Immutable
 ```
 
 ---
 
-## 7. Practice
+## 8. Practice
 
-```js id="sort9"
-const numbers = [50, 10, 40, 20];
+```js id="ia8"
+const numbers = [1, 2, 3];
 
-// Sort numbers ascending
+// Add 4 immutably
 ```
 
 Answer:
 
-```js id="sort10"
-const sortedNumbers = [...numbers].sort((a, b) => a - b);
-console.log(sortedNumbers); // [10, 20, 40, 50]
+```js id="ia9"
+const newNumbers = [...numbers, 4];
+console.log(newNumbers); // [1, 2, 3, 4]
 ```
 
 ---
 
-## 8. Summary
+## 9. Summary
 
-* `sort()` **orders array elements** in place
-* Default is **lexicographical** → bad for numbers
-* Use **compare functions** for numeric or custom sorting
-* Works with **numbers, strings, and objects**
-* Combine with `map()` in React to render **sorted lists**
+* Immutability avoids **unexpected bugs in React**
+* Use **map, filter, reduce, slice, spread**
+* Avoid **push, pop, splice, sort** directly
+* Always **return a new array** when updating state
 
 ---
 
 ## Rule
 
-Use `sort()` to **arrange array elements** as needed, and copy arrays first if you want to **avoid modifying the original**.
-
+Work with arrays **immutably** in React to ensure **state updates** are detected and UI re-renders correctly.
