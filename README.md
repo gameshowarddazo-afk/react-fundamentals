@@ -1,197 +1,191 @@
-# Destructuring: Object & Array
+# Rest and Spread Operators (JavaScript for React)
 
 ---
 
 ## 1. Overview
 
-Destructuring is a way to **extract values from objects and arrays**.
+Rest (`...`) and Spread (`...`) look the same but have **different uses**:
 
-Benefits:
-
-- Shorter code
-- Cleaner syntax
-- Easier to read and maintain
+* **Spread**: expands elements of arrays or properties of objects
+* **Rest**: collects multiple elements into a single array or object
 
 ---
 
-## 2. Object Destructuring
+## 2. Spread Operator (`...`)
 
-### Basic Example
+### 2.1 Arrays
 
-```js
-const user = {
-  name: "Howard",
-  age: 21,
+```js id="a1b2c3"
+const numbers = [1, 2, 3];
+const newNumbers = [...numbers, 4, 5];
+
+console.log(newNumbers); // [1, 2, 3, 4, 5]
+```
+
+* Expands elements of `numbers` into a new array
+* Useful to **avoid mutating the original array**
+
+---
+
+### 2.2 Objects
+
+```js id="d4e5f6"
+const user = { name: "Howard", age: 21 };
+const updatedUser = { ...user, country: "PH" };
+
+console.log(updatedUser);
+// { name: "Howard", age: 21, country: "PH" }
+```
+
+* Copies all properties from `user` into a new object
+* Can **add or override properties**
+
+---
+
+### 2.3 Function Arguments
+
+```js id="g7h8i9"
+const nums = [1, 2, 3];
+
+const sum = (a, b, c) => a + b + c;
+
+console.log(sum(...nums)); // 6
+```
+
+* Expands array into individual arguments
+
+---
+
+## 3. Rest Operator (`...`)
+
+### 3.1 Arrays
+
+```js id="j1k2l3"
+const [first, ...rest] = [1, 2, 3, 4];
+
+console.log(first); // 1
+console.log(rest);  // [2, 3, 4]
+```
+
+* Collects the **remaining elements** into an array
+
+---
+
+### 3.2 Objects
+
+```js id="m4n5o6"
+const { name, ...others } = { name: "Howard", age: 21, country: "PH" };
+
+console.log(name);   // Howard
+console.log(others); // { age: 21, country: "PH" }
+```
+
+* Collects **remaining properties** into a new object
+
+---
+
+### 3.3 Function Parameters
+
+```js id="p7q8r9"
+const sum = (...numbers) => {
+  return numbers.reduce((acc, curr) => acc + curr, 0);
 };
 
-const { name, age } = user;
-
-console.log(name); // Howard
-console.log(age); // 21
+console.log(sum(1, 2, 3, 4)); // 10
 ```
 
----
-
-### Renaming Variables
-
-```js
-const user = { name: "Howard" };
-
-const { name: username } = user;
-
-console.log(username); // Howard
-```
-
----
-
-### Default Values
-
-```js
-const user = { name: "Howard" };
-
-const { age = 18 } = user;
-
-console.log(age); // 18
-```
-
----
-
-### Nested Destructuring
-
-```js
-const user = {
-  name: "Howard",
-  address: { city: "Manila" },
-};
-
-const {
-  address: { city },
-} = user;
-
-console.log(city); // Manila
-```
-
----
-
-### Using Spread with Objects
-
-```js
-const user = { name: "Howard", age: 21, country: "PH" };
-
-const { name, ...rest } = user;
-
-console.log(name); // Howard
-console.log(rest); // { age: 21, country: "PH" }
-```
-
----
-
-## 3. Array Destructuring
-
-### Basic Example
-
-```js
-const fruits = ["apple", "banana", "mango"];
-
-const [first, second] = fruits;
-
-console.log(first); // apple
-console.log(second); // banana
-```
-
----
-
-### Skipping Values
-
-```js
-const fruits = ["apple", "banana", "mango"];
-
-const [first, , third] = fruits;
-
-console.log(third); // mango
-```
-
----
-
-### Default Values in Arrays
-
-```js
-const numbers = [10];
-
-const [a, b = 20] = numbers;
-
-console.log(a); // 10
-console.log(b); // 20
-```
+* Collects **any number of arguments** into an array
 
 ---
 
 ## 4. React Examples
 
-### Props Destructuring
+### 4.1 Props Spread
 
-```jsx
-const Welcome = ({ name }) => {
-  return <h1>Hello {name}</h1>;
-};
+```jsx id="s1t2u3"
+const props = { name: "Howard", age: 21 };
+
+const User = (props) => <h1>{props.name}, {props.age}</h1>;
+
+// Use spread
+<User {...props} />
 ```
 
 ---
 
-### Function Parameter Destructuring
+### 4.2 State Update with Spread
 
-```js
-const printUser = ({ name, age }) => {
-  console.log(name, age);
-};
+```jsx id="v4w5x6"
+const [user, setUser] = useState({ name: "Howard", age: 21 });
+
+// Update only age without mutating original
+setUser({ ...user, age: 22 });
 ```
 
 ---
 
 ## 5. Common Mistakes
 
-- Wrong variable name
+* Confusing rest and spread
 
-```js
-const { username } = user; // undefined
+```js id="y7z8a9"
+// ❌ Wrong
+const nums = [1, 2, 3];
+const [rest, first] = nums; // Not correct
 ```
 
-- Destructuring undefined
+* Mutating objects instead of spreading
 
-```js
-const { name } = undefined; // error
+```js id="b1c2d3"
+const user = { name: "Howard" };
+user.age = 21; // avoid, use spread instead
 ```
 
 ---
 
 ## 6. Practice
 
-Object:
+### 6.1 Arrays
 
-```js
-const product = { title: "Laptop", price: 50000 };
-const { title, price } = product;
+```js id="e4f5g6"
+const numbers = [1, 2, 3, 4, 5];
+const [first, ...rest] = numbers;
 ```
 
-Array:
+Answer:
 
-```js
-const numbers = [10, 20, 30];
-const [first, second] = numbers;
+```js id="h7i8j9"
+first // 1
+rest  // [2, 3, 4, 5]
 ```
 
 ---
 
-## Summary
+### 6.2 Objects
 
-- Object destructuring uses `{}`
-- Array destructuring uses `[]`
-- Supports default values, renaming, nested extraction
-- Very common in React for props and state
-- Helps make code shorter and cleaner
+```js id="k1l2m3"
+const user = { name: "Howard", age: 21, country: "PH" };
+const { name, ...others } = user;
+```
+
+Answer:
+
+```js id="n4o5p6"
+name   // "Howard"
+others // { age: 21, country: "PH" }
+```
+
+---
+
+## 7. Summary
+
+* **Spread (`...`)**: expand arrays/objects
+* **Rest (`...`)**: collect remaining elements/properties
+* Very useful in React for **props, state, and arrays**
+* Helps **avoid mutation** and keeps code clean
 
 ---
 
 ## Rule
 
-Use destructuring whenever you need to **extract values from objects or arrays** to keep code readable and concise.
+Use **spread to expand** and **rest to collect** values in objects, arrays, or function parameters.
