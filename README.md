@@ -1,49 +1,134 @@
-# `const` and `let` Patterns (Beginner → Advanced for React)
+# Destructuring: Object & Array
 
 ---
 
-## 1. Golden Rule
+## 1. Overview
 
-* Use `const` by default
-* Use `let` if the value will change
+Destructuring is a way to **extract values from objects and arrays**.
 
-```js
-const name = "Howard";
+Benefits:
 
-let count = 0;
-count++;
-```
+- Shorter code
+- Cleaner syntax
+- Easier to read and maintain
 
 ---
 
-## 2. Beginner Pattern
+## 2. Object Destructuring
 
-Start with `const`:
-
-```js
-const price = 100;
-```
-
-Switch to `let` only when needed:
+### Basic Example
 
 ```js
-let total = 0;
-total += 10;
-```
-
----
-
-## 3. React Basic Pattern
-
-Components use `const`:
-
-```jsx
-const App = () => {
-  return <h1>Hello React</h1>;
+const user = {
+  name: "Howard",
+  age: 21,
 };
+
+const { name, age } = user;
+
+console.log(name); // Howard
+console.log(age); // 21
 ```
 
-Props also use `const`:
+---
+
+### Renaming Variables
+
+```js
+const user = { name: "Howard" };
+
+const { name: username } = user;
+
+console.log(username); // Howard
+```
+
+---
+
+### Default Values
+
+```js
+const user = { name: "Howard" };
+
+const { age = 18 } = user;
+
+console.log(age); // 18
+```
+
+---
+
+### Nested Destructuring
+
+```js
+const user = {
+  name: "Howard",
+  address: { city: "Manila" },
+};
+
+const {
+  address: { city },
+} = user;
+
+console.log(city); // Manila
+```
+
+---
+
+### Using Spread with Objects
+
+```js
+const user = { name: "Howard", age: 21, country: "PH" };
+
+const { name, ...rest } = user;
+
+console.log(name); // Howard
+console.log(rest); // { age: 21, country: "PH" }
+```
+
+---
+
+## 3. Array Destructuring
+
+### Basic Example
+
+```js
+const fruits = ["apple", "banana", "mango"];
+
+const [first, second] = fruits;
+
+console.log(first); // apple
+console.log(second); // banana
+```
+
+---
+
+### Skipping Values
+
+```js
+const fruits = ["apple", "banana", "mango"];
+
+const [first, , third] = fruits;
+
+console.log(third); // mango
+```
+
+---
+
+### Default Values in Arrays
+
+```js
+const numbers = [10];
+
+const [a, b = 20] = numbers;
+
+console.log(a); // 10
+console.log(b); // 20
+```
+
+---
+
+## 4. React Examples
+
+### Props Destructuring
 
 ```jsx
 const Welcome = ({ name }) => {
@@ -53,188 +138,60 @@ const Welcome = ({ name }) => {
 
 ---
 
-## 4. Avoid Mutation
-
-Do not change arrays or objects directly.
-
-Bad:
+### Function Parameter Destructuring
 
 ```js
-const arr = [1, 2];
-arr.push(3);
-```
-
-Good:
-
-```js
-const arr = [1, 2];
-const newArr = [...arr, 3];
+const printUser = ({ name, age }) => {
+  console.log(name, age);
+};
 ```
 
 ---
 
-## 5. Loop Pattern
+## 5. Common Mistakes
 
-Use `let` when values change in loops:
+- Wrong variable name
 
 ```js
-for (let i = 0; i < 5; i++) {
-  console.log(i);
-}
+const { username } = user; // undefined
+```
+
+- Destructuring undefined
+
+```js
+const { name } = undefined; // error
 ```
 
 ---
 
-## 6. Conditional Pattern
+## 6. Practice
 
-Use `let` when value depends on logic:
-
-```js
-let result;
-
-if (score > 50) {
-  result = "Pass";
-} else {
-  result = "Fail";
-}
-```
-
----
-
-## 7. Derived Values
-
-Use `const` for computed values:
+Object:
 
 ```js
-const total = price * quantity;
+const product = { title: "Laptop", price: 50000 };
+const { title, price } = product;
 ```
 
-Avoid unnecessary `let`:
+Array:
 
 ```js
-let total = price * quantity;
-```
-
----
-
-## 8. React State Pattern
-
-Do not reassign state directly.
-
-Wrong:
-
-```jsx
-const [count, setCount] = useState(0);
-count++;
-```
-
-Correct:
-
-```jsx
-setCount(count + 1);
-```
-
----
-
-## 9. Immutability Pattern
-
-Arrays:
-
-```js
-const items = ["a", "b"];
-const newItems = [...items, "c"];
-```
-
-Objects:
-
-```js
-const user = { name: "Howard" };
-const updatedUser = { ...user, age: 21 };
-```
-
----
-
-## 10. Block Scope
-
-Both `const` and `let` are block scoped:
-
-```js
-if (true) {
-  const message = "Hello";
-}
-
-console.log(message); // error
-```
-
----
-
-## 11. Anti-Patterns
-
-Using `let` unnecessarily:
-
-```js
-let name = "Howard";
-```
-
-Reassigning `const`:
-
-```js
-const age = 21;
-age = 22;
-```
-
-Mutating data:
-
-```js
-arr.push(3);
-```
-
----
-
-## 12. Practice
-
-Fix:
-
-```js
-let price = 100;
-```
-
-Answer:
-
-```js
-const price = 100;
-```
-
----
-
-Fix:
-
-```js
-const count = 0;
-count++;
-```
-
-Answer:
-
-```js
-let count = 0;
-count++;
+const numbers = [10, 20, 30];
+const [first, second] = numbers;
 ```
 
 ---
 
 ## Summary
 
-* Use `const` by default
-* Use `let` only when needed
-* Do not mutate arrays or objects
-* Use spread (`...`) for updates
-* Components and props use `const`
-* React state must be updated using functions
+- Object destructuring uses `{}`
+- Array destructuring uses `[]`
+- Supports default values, renaming, nested extraction
+- Very common in React for props and state
+- Helps make code shorter and cleaner
 
 ---
 
 ## Rule
 
-If the value does not change, use `const`.
-If the value changes, use `let`.
+Use destructuring whenever you need to **extract values from objects or arrays** to keep code readable and concise.
