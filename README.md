@@ -1,153 +1,154 @@
-# The Array `map()` Method
+# The Array `sort()` Method
 
 ---
 
 ## 1. Overview
 
-The `map()` method **creates a new array** by applying a function to each element of an existing array.
+The `sort()` method **sorts the elements of an array in place** and **returns the sorted array**.
 
-* Original array **is not modified**
-* Very common in React for **rendering lists**
+* Default sort is **lexicographical** (like strings)
+* Can provide a **compare function** for numeric or custom sorting
+* **Original array is modified**
 
 Syntax:
 
-```js id="map1"
-const newArray = array.map((element, index) => {
-  // return new value
+```js id="sort1"
+array.sort((a, b) => {
+  // return < 0 → a before b
+  // return 0 → keep order
+  // return > 0 → b before a
 });
 ```
 
-* `element` → current item
-* `index` → current item’s position (optional)
-* Function returns the **new element**
-
 ---
 
-## 2. Basic Example
+## 2. Sorting Strings
 
-```js id="map2"
-const numbers = [1, 2, 3];
-const doubled = numbers.map(n => n * 2);
+```js id="sort2"
+const fruits = ["banana", "apple", "mango"];
+fruits.sort();
 
-console.log(doubled); // [2, 4, 6]
+console.log(fruits); // ["apple", "banana", "mango"]
 ```
 
-* Original `numbers` array stays `[1, 2, 3]`
+* Default sort works well for **strings**
 
 ---
 
-## 3. Using Index
+## 3. Sorting Numbers
 
-```js id="map3"
-const fruits = ["apple", "banana", "mango"];
-const fruitList = fruits.map((fruit, i) => `${i + 1}. ${fruit}`);
+```js id="sort3"
+const numbers = [10, 5, 20, 1];
+numbers.sort();
 
-console.log(fruitList);
-// ["1. apple", "2. banana", "3. mango"]
+console.log(numbers); // [1, 10, 20, 5] ❌ unexpected
 ```
 
-* Index is useful for **numbering** or as **React keys**
+* Default sort treats numbers as strings → **not numeric**
+
+### Correct Numeric Sort
+
+```js id="sort4"
+const numbers = [10, 5, 20, 1];
+numbers.sort((a, b) => a - b);
+
+console.log(numbers); // [1, 5, 10, 20]
+```
+
+* `a - b` → ascending
+* `b - a` → descending
 
 ---
 
-## 4. Objects in Array
+## 4. Sorting Objects
 
-```js id="map4"
+```js id="sort5"
 const users = [
   { name: "Howard", age: 21 },
-  { name: "Alice", age: 25 }
+  { name: "Alice", age: 25 },
+  { name: "Bob", age: 18 }
 ];
 
-const names = users.map(user => user.name);
+users.sort((a, b) => a.age - b.age);
 
-console.log(names); // ["Howard", "Alice"]
+console.log(users);
+// [{ name: "Bob", age: 18 }, { name: "Howard", age: 21 }, { name: "Alice", age: 25 }]
 ```
 
-* Extract specific properties from objects
+* Sort by **object property** using a compare function
 
 ---
 
-## 5. React Example: Rendering Lists
+## 5. React Example: Rendering Sorted List
 
-```jsx id="map5"
+```jsx id="sort6"
 const users = [
-  { id: 1, name: "Howard" },
-  { id: 2, name: "Alice" }
+  { id: 1, name: "Howard", age: 21 },
+  { id: 2, name: "Alice", age: 25 }
 ];
 
 const UserList = () => (
   <ul>
-    {users.map(user => (
-      <li key={user.id}>{user.name}</li>
-    ))}
+    {users
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(user => <li key={user.id}>{user.name}</li>)}
   </ul>
 );
 ```
 
-* Always provide a **unique `key`** for list items in React
+* Use `localeCompare` for **alphabetical sorting in strings**
+* Combine with `map()` for React list rendering
 
 ---
 
-## 6. Chaining with Other Methods
+## 6. Common Mistakes
 
-```js id="map6"
-const numbers = [1, 2, 3, 4, 5];
+* Not providing a compare function for numbers → gives **incorrect order**
+* Forgetting that `sort()` **modifies the original array**
 
-const doubledEven = numbers
-  .filter(n => n % 2 === 0)
-  .map(n => n * 2);
-
-console.log(doubledEven); // [4, 8]
+```js id="sort7"
+// ❌
+const numbers = [3, 1, 2];
+const sorted = numbers.sort(); // numbers is modified
 ```
 
-* Combine with `filter()`, `sort()`, etc.
+* To avoid modifying the original array, copy first:
 
----
-
-## 7. Common Mistakes
-
-* Forgetting to **return** a value in a multi-line function:
-
-```js id="map7"
-// ❌ Wrong
-const numbers = [1,2,3];
-const doubled = numbers.map(n => { n * 2 }); // undefined
-
-// ✅ Correct
-const doubledCorrect = numbers.map(n => { return n * 2 });
+```js id="sort8"
+const numbers = [3, 1, 2];
+const sorted = [...numbers].sort((a, b) => a - b);
 ```
 
-* Using `map()` when you just want **side-effects** → use `forEach()` instead
-
 ---
 
-## 8. Practice
+## 7. Practice
 
-```js id="map8"
-const numbers = [1, 2, 3, 4, 5];
+```js id="sort9"
+const numbers = [50, 10, 40, 20];
 
-// Use map to create an array of strings: "Number: X"
+// Sort numbers ascending
 ```
 
 Answer:
 
-```js id="map9"
-const numberStrings = numbers.map(n => `Number: ${n}`);
-console.log(numberStrings); 
-// ["Number: 1", "Number: 2", "Number: 3", "Number: 4", "Number: 5"]
+```js id="sort10"
+const sortedNumbers = [...numbers].sort((a, b) => a - b);
+console.log(sortedNumbers); // [10, 20, 40, 50]
 ```
 
 ---
 
-## 9. Summary
+## 8. Summary
 
-* `map()` transforms each element in an array **without modifying the original**
-* Can work with numbers, strings, or objects
-* In React, commonly used to **render dynamic lists**
-* Remember to **return** a value and use **keys for JSX lists**
+* `sort()` **orders array elements** in place
+* Default is **lexicographical** → bad for numbers
+* Use **compare functions** for numeric or custom sorting
+* Works with **numbers, strings, and objects**
+* Combine with `map()` in React to render **sorted lists**
 
 ---
 
 ## Rule
 
-Use `map()` to **create a new array** based on the old one or **render lists** in React.
+Use `sort()` to **arrange array elements** as needed, and copy arrays first if you want to **avoid modifying the original**.
+
