@@ -1,191 +1,159 @@
-# Rest and Spread Operators (JavaScript for React)
+# Template Literals (JavaScript for React)
 
 ---
 
 ## 1. Overview
 
-Rest (`...`) and Spread (`...`) look the same but have **different uses**:
+Template literals allow you to create **strings easily** and **embed variables** without using `+` for concatenation.
 
-* **Spread**: expands elements of arrays or properties of objects
-* **Rest**: collects multiple elements into a single array or object
+* Use **backticks** `` ` `` instead of quotes `' '` or `" "`
+* Use **`${}`** to insert expressions
 
 ---
 
-## 2. Spread Operator (`...`)
+## 2. Basic Example
 
-### 2.1 Arrays
+```js id="t1a2b3"
+const name = "Howard";
+const greeting = `Hello, ${name}!`;
 
-```js id="a1b2c3"
-const numbers = [1, 2, 3];
-const newNumbers = [...numbers, 4, 5];
-
-console.log(newNumbers); // [1, 2, 3, 4, 5]
+console.log(greeting); // Hello, Howard!
 ```
 
-* Expands elements of `numbers` into a new array
-* Useful to **avoid mutating the original array**
+---
+
+## 3. Multi-line Strings
+
+```js id="t4c5d6"
+const message = `This is line 1
+This is line 2
+This is line 3`;
+
+console.log(message);
+/*
+This is line 1
+This is line 2
+This is line 3
+*/
+```
+
+* No need for `\n` for line breaks
 
 ---
 
-### 2.2 Objects
+## 4. Expressions Inside Template Literals
 
-```js id="d4e5f6"
+```js id="t7e8f9"
+const a = 10;
+const b = 20;
+
+const result = `The sum of ${a} + ${b} is ${a + b}`;
+
+console.log(result); // The sum of 10 + 20 is 30
+```
+
+---
+
+## 5. Template Literals with Functions
+
+```js id="t1g2h3"
 const user = { name: "Howard", age: 21 };
-const updatedUser = { ...user, country: "PH" };
 
-console.log(updatedUser);
-// { name: "Howard", age: 21, country: "PH" }
-```
+const message = `Hello ${user.name}, you are ${user.age} years old.`;
 
-* Copies all properties from `user` into a new object
-* Can **add or override properties**
-
----
-
-### 2.3 Function Arguments
-
-```js id="g7h8i9"
-const nums = [1, 2, 3];
-
-const sum = (a, b, c) => a + b + c;
-
-console.log(sum(...nums)); // 6
-```
-
-* Expands array into individual arguments
-
----
-
-## 3. Rest Operator (`...`)
-
-### 3.1 Arrays
-
-```js id="j1k2l3"
-const [first, ...rest] = [1, 2, 3, 4];
-
-console.log(first); // 1
-console.log(rest);  // [2, 3, 4]
-```
-
-* Collects the **remaining elements** into an array
-
----
-
-### 3.2 Objects
-
-```js id="m4n5o6"
-const { name, ...others } = { name: "Howard", age: 21, country: "PH" };
-
-console.log(name);   // Howard
-console.log(others); // { age: 21, country: "PH" }
-```
-
-* Collects **remaining properties** into a new object
-
----
-
-### 3.3 Function Parameters
-
-```js id="p7q8r9"
-const sum = (...numbers) => {
-  return numbers.reduce((acc, curr) => acc + curr, 0);
-};
-
-console.log(sum(1, 2, 3, 4)); // 10
-```
-
-* Collects **any number of arguments** into an array
-
----
-
-## 4. React Examples
-
-### 4.1 Props Spread
-
-```jsx id="s1t2u3"
-const props = { name: "Howard", age: 21 };
-
-const User = (props) => <h1>{props.name}, {props.age}</h1>;
-
-// Use spread
-<User {...props} />
+console.log(message);
 ```
 
 ---
 
-### 4.2 State Update with Spread
+## 6. Using Template Literals in React
 
-```jsx id="v4w5x6"
-const [user, setUser] = useState({ name: "Howard", age: 21 });
+```jsx id="t4i5j6"
+const name = "Howard";
+const greeting = `Hello ${name}, welcome to React!`;
 
-// Update only age without mutating original
-setUser({ ...user, age: 22 });
+const App = () => <h1>{greeting}</h1>;
 ```
+
+* Makes **JSX expressions cleaner**
+* Easier than concatenation with `+`
 
 ---
 
-## 5. Common Mistakes
+## 7. Tagged Template Literals (Advanced)
 
-* Confusing rest and spread
+```js id="t7k8l9"
+function highlight(strings, ...values) {
+  return strings.reduce(
+    (result, str, i) => `${result}<strong>${values[i - 1] || ''}</strong>${str}`
+  );
+}
 
-```js id="y7z8a9"
+const name = "Howard";
+const age = 21;
+
+const message = highlight`My name is ${name} and I am ${age} years old.`;
+
+console.log(message);
+// My name is <strong>Howard</strong> and I am <strong>21</strong> years old.
+```
+
+* Advanced feature: process template literal values with a function
+
+---
+
+## 8. Common Mistakes
+
+* Using quotes instead of backticks
+
+```js id="t1m2n3"
 // ❌ Wrong
-const nums = [1, 2, 3];
-const [rest, first] = nums; // Not correct
+const msg = 'Hello ${name}';
+console.log(msg); // prints literally: Hello ${name}
+
+// ✅ Correct
+const msg = `Hello ${name}`;
 ```
 
-* Mutating objects instead of spreading
+* Forgetting `${}` for expressions
 
-```js id="b1c2d3"
-const user = { name: "Howard" };
-user.age = 21; // avoid, use spread instead
+```js id="t4o5p6"
+const a = 10;
+const msg = `Value is a`; // prints: Value is a
+
+const msgCorrect = `Value is ${a}`; // prints: Value is 10
 ```
 
 ---
 
-## 6. Practice
+## 9. Practice
 
-### 6.1 Arrays
+```js id="t7q8r9"
+const firstName = "Howard";
+const lastName = "Dazo";
 
-```js id="e4f5g6"
-const numbers = [1, 2, 3, 4, 5];
-const [first, ...rest] = numbers;
+// Create a greeting using template literals
 ```
 
 Answer:
 
-```js id="h7i8j9"
-first // 1
-rest  // [2, 3, 4, 5]
+```js id="t0s1t2"
+const greeting = `Hello ${firstName} ${lastName}!`;
+console.log(greeting); // Hello Howard Dazo!
 ```
 
 ---
 
-### 6.2 Objects
+## 10. Summary
 
-```js id="k1l2m3"
-const user = { name: "Howard", age: 21, country: "PH" };
-const { name, ...others } = user;
-```
-
-Answer:
-
-```js id="n4o5p6"
-name   // "Howard"
-others // { age: 21, country: "PH" }
-```
-
----
-
-## 7. Summary
-
-* **Spread (`...`)**: expand arrays/objects
-* **Rest (`...`)**: collect remaining elements/properties
-* Very useful in React for **props, state, and arrays**
-* Helps **avoid mutation** and keeps code clean
+* Template literals use **backticks `` ` ``**
+* Use **`${}`** to embed variables or expressions
+* Support **multi-line strings**
+* Useful in React for JSX and dynamic content
+* Advanced: tagged template literals for custom string processing
 
 ---
 
 ## Rule
 
-Use **spread to expand** and **rest to collect** values in objects, arrays, or function parameters.
+Use **template literals** instead of string concatenation to make code **cleaner, readable, and dynamic**.
