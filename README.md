@@ -1,160 +1,153 @@
-# Short-Circuiting and Logical Operators (`&&`, `||`, `??`)
+# The Array `map()` Method
 
 ---
 
 ## 1. Overview
 
-Logical operators can be used not only for **true/false checks** but also for **short-circuit evaluation**.
+The `map()` method **creates a new array** by applying a function to each element of an existing array.
 
-* **`&&`** → returns right-hand side if left-hand side is truthy
-* **`||`** → returns left-hand side if truthy, otherwise right-hand side
-* **`??`** → nullish coalescing, returns right-hand side if left-hand side is `null` or `undefined`
+* Original array **is not modified**
+* Very common in React for **rendering lists**
+
+Syntax:
+
+```js id="map1"
+const newArray = array.map((element, index) => {
+  // return new value
+});
+```
+
+* `element` → current item
+* `index` → current item’s position (optional)
+* Function returns the **new element**
 
 ---
 
-## 2. AND (`&&`) Operator
+## 2. Basic Example
 
-```js
-const isLoggedIn = true;
-const message = isLoggedIn && "Welcome back!";
+```js id="map2"
+const numbers = [1, 2, 3];
+const doubled = numbers.map(n => n * 2);
 
-console.log(message); // "Welcome back!"
+console.log(doubled); // [2, 4, 6]
 ```
 
-* If `isLoggedIn` is `true` → returns right-hand value
-* If `isLoggedIn` is `false` → returns `false`
+* Original `numbers` array stays `[1, 2, 3]`
 
-### React Example
+---
 
-```jsx
-const isLoggedIn = true;
+## 3. Using Index
 
-const App = () => (
-  <div>
-    {isLoggedIn && <h1>Welcome back!</h1>}
-  </div>
+```js id="map3"
+const fruits = ["apple", "banana", "mango"];
+const fruitList = fruits.map((fruit, i) => `${i + 1}. ${fruit}`);
+
+console.log(fruitList);
+// ["1. apple", "2. banana", "3. mango"]
+```
+
+* Index is useful for **numbering** or as **React keys**
+
+---
+
+## 4. Objects in Array
+
+```js id="map4"
+const users = [
+  { name: "Howard", age: 21 },
+  { name: "Alice", age: 25 }
+];
+
+const names = users.map(user => user.name);
+
+console.log(names); // ["Howard", "Alice"]
+```
+
+* Extract specific properties from objects
+
+---
+
+## 5. React Example: Rendering Lists
+
+```jsx id="map5"
+const users = [
+  { id: 1, name: "Howard" },
+  { id: 2, name: "Alice" }
+];
+
+const UserList = () => (
+  <ul>
+    {users.map(user => (
+      <li key={user.id}>{user.name}</li>
+    ))}
+  </ul>
 );
 ```
 
-* Common pattern for **conditional rendering**
+* Always provide a **unique `key`** for list items in React
 
 ---
 
-## 3. OR (`||`) Operator
+## 6. Chaining with Other Methods
 
-```js
-const username = "";
-const defaultName = username || "Guest";
+```js id="map6"
+const numbers = [1, 2, 3, 4, 5];
 
-console.log(defaultName); // "Guest"
+const doubledEven = numbers
+  .filter(n => n % 2 === 0)
+  .map(n => n * 2);
+
+console.log(doubledEven); // [4, 8]
 ```
 
-* Returns **first truthy value**
-* Useful for **default values**
-
-### React Example
-
-```jsx
-const user = { name: "" };
-
-const App = () => (
-  <h1>Hello {user.name || "Guest"}</h1>
-);
-```
+* Combine with `filter()`, `sort()`, etc.
 
 ---
 
-## 4. Nullish Coalescing (`??`) Operator
+## 7. Common Mistakes
 
-```js
-const count = 0;
-const displayCount = count ?? 10;
+* Forgetting to **return** a value in a multi-line function:
 
-console.log(displayCount); // 0
+```js id="map7"
+// ❌ Wrong
+const numbers = [1,2,3];
+const doubled = numbers.map(n => { n * 2 }); // undefined
+
+// ✅ Correct
+const doubledCorrect = numbers.map(n => { return n * 2 });
 ```
 
-* Only returns right-hand side if **left-hand side is ****`null`**** or ****`undefined`**
-* Different from `||` because `0`, `""`, `false` are considered valid
-
-### React Example
-
-```jsx
-const user = { name: null };
-
-const App = () => <h1>Hello {user.name ?? "Guest"}</h1>;
-```
+* Using `map()` when you just want **side-effects** → use `forEach()` instead
 
 ---
 
-## 5. Combining Operators
+## 8. Practice
 
-```js
-const isLoggedIn = true;
-const username = "";
+```js id="map8"
+const numbers = [1, 2, 3, 4, 5];
 
-const displayName = isLoggedIn && (username || "Guest");
-
-console.log(displayName); // "Guest"
-```
-
-* Use `&&` to check conditions
-* Use `||` or `??` for default values
-
----
-
-## 6. Common Mistakes
-
-* Using `||` when `0` or `""` is valid
-
-```js
-//  Wrong
-const value = 0;
-const display = value || 10; // 10 instead of 0
-
-//  c
-const display = value ?? 10; // 0
-```
-
-* Forgetting parentheses in complex expressions
-
-```js
-// Wrong
-const result = isLoggedIn && username || "Guest"; // can be confusing
-
-// Correct
-const result = isLoggedIn && (username || "Guest");
-```
-
----
-
-## 7. Practice
-
-```js
-const user = { name: "" };
-const isLoggedIn = false;
-
-// Create a displayName that shows "Guest" if not logged in or name is empty
+// Use map to create an array of strings: "Number: X"
 ```
 
 Answer:
 
-```js
-const displayName = isLoggedIn && (user.name || "Guest");
-console.log(displayName); // false
+```js id="map9"
+const numberStrings = numbers.map(n => `Number: ${n}`);
+console.log(numberStrings); 
+// ["Number: 1", "Number: 2", "Number: 3", "Number: 4", "Number: 5"]
 ```
 
 ---
 
-## 8. Summary
+## 9. Summary
 
-* `&&` → run right-hand side if left is truthy
-* `||` → return first truthy value
-* `??` → return right-hand side only if left is `null` or `undefined`
-* Common in React for **conditional rendering** and **default values**
-* Use parentheses to avoid confusion in combined expressions
+* `map()` transforms each element in an array **without modifying the original**
+* Can work with numbers, strings, or objects
+* In React, commonly used to **render dynamic lists**
+* Remember to **return** a value and use **keys for JSX lists**
 
 ---
 
 ## Rule
 
-Use logical operators for **short, readable conditions** and to **provide defaults** without `if/else` statements.
+Use `map()` to **create a new array** based on the old one or **render lists** in React.
